@@ -1,12 +1,10 @@
 # describe your team, project, and goals here
 
-LOOK AT ME
-hello
+Hi, we're a 3 man team of pretty cool doods.
 
-- Size of team (2-5)
-- Mandatory use of Firebase. Bonus using Android or Progressive Web App.
-- Must include a business model
-- No code may be written before Saturday Nov 19; Github repos will be provided on Saturday
+Our plan is to classify aerial photos of croplands as healthy and not healthy.  
+
+I guess we could just sell it as a business model..
 
 # Schedule
 <!---
