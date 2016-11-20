@@ -90,24 +90,28 @@ def get_color_name(requested_color):
 
 
 # [START main]
-def main(gcs_uri):
+def run(gcs_uri):
     if gcs_uri[:5] != 'gs://':
         raise Exception('Image uri must be of the form gs://bucket/object')
     annotations = identify_image(gcs_uri)
     if not annotations:
         print(annotations)
     else:
-#        printer(annotations)
         for annotation in annotations:
             color = annotation.get('color')
-            print(annotation)
             pixel_fraction = annotation.get('pixelFraction')
-#            if pixel_fraction > 0.025:
             red = color.get('red')
             green = color.get('green')
             blue = color.get('blue')
             required_colors = (red, green, blue)
-            print(get_color_name(required_colors))
+            actual_name, closest_name = get_color_name(required_colors)
+            if 'yellow' in closest_name or 'gold' in closest_name:
+                message = gcs_uri + ' is DED'
+                break
+            elif 'green' in closest_name:
+                message = gcs_uri + ' looks healthy to me ¯\_(ツ)_/¯'
+        print(message)
+
 # [END main]
 
 
@@ -119,4 +123,4 @@ if __name__ == '__main__':
                 ', of the form: gs://bucket_Name/object_name.jpg'))
     args = parser.parse_args()
 
-    main(args.gcs_uri)
+    run(args.gcs_uri)
