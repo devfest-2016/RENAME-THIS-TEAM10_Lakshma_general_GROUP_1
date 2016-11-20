@@ -39,7 +39,7 @@ def upload_image_file(file):
     bucket = current_app.config['CLOUD_STORAGE_BUCKET']
     urlstring = "gs://"+bucket+"/"+filename
 
-    print(identify.run(urlstring))
+    identify.run(urlstring)
 
     current_app.logger.info(
         "Uploaded file %s as %s.", file.filename, public_url)
