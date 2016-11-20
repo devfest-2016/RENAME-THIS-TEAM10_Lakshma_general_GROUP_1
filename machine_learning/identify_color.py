@@ -110,7 +110,13 @@ def run(gcs_uri):
                 break
             elif 'green' in closest_name:
                 message = gcs_uri + ' looks healthy to me ¯\_(ツ)_/¯'
-        print(message)
+#        print(message)
+        return_obj = {
+                'url': gcs_uri,
+                'message': message,
+                'meta': annotations,
+                }
+        return return_obj
 
 # [END main]
 
