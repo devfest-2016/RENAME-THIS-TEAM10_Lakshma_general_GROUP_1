@@ -13,10 +13,12 @@ import urllib.request
 import json
 import webcolors
 
+
+# [START pretty printer]
 pp = pprint.PrettyPrinter(indent=4)
 def printer(stuff):
     return pp.pprint(stuff)
-
+# [END pretty printer]
 
 # [START get_vision_service]
 DISCOVERY_URL='https://{api}.googleapis.com/$discovery/rest?version={apiVersion}'
