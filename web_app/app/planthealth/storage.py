@@ -70,5 +70,5 @@ def upload_file(file_stream, filename, content_type):
     if isinstance(url, six.binary_type):
         url = url.decode('utf-8')
 
-    return url
+    return url, filename
 # [END upload_file]

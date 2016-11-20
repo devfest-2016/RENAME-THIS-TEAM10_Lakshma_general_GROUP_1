@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from machine_learning import identify_color as identify
 from planthealth import get_model, storage
 from flask import Blueprint, current_app, redirect, render_template, request, \
     url_for
@@ -29,11 +30,16 @@ def upload_image_file(file):
     if not file:
         return None
 
-    public_url = storage.upload_file(
+    public_url, filename = storage.upload_file(
         file.read(),
         file.filename,
         file.content_type
     )
+
+    bucket = current_app.config['CLOUD_STORAGE_BUCKET']
+    urlstring = "gs://"+bucket+"/"+filename
+
+    identify.run(urlstring)
 
     current_app.logger.info(
         "Uploaded file %s as %s.", file.filename, public_url)

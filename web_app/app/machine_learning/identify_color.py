@@ -12,6 +12,7 @@ import httplib2
 import urllib.request
 import json
 import webcolors
+import requests
 
 
 # [START pretty printer]
@@ -61,7 +62,11 @@ def identify_image(gcs_uri, max_results=50):
         })
     response = request.execute()
 
-    return response['responses'][0].get('imagePropertiesAnnotation').get('dominantColors').get('colors')
+    return_object = {
+        'meta': response['responses'][0].get('labelAnnotations'),
+        'colors': response['responses'][0].get('imagePropertiesAnnotation').get('dominantColors').get('colors'),
+    }
+    return return_object
 # [END identify_image]
 
 
@@ -89,17 +94,27 @@ def get_color_name(requested_color):
 # [END determine color]
 
 
+# [START drop_payload]
+def drop_payload(payload):
+    url = 'http://script.google.com/macros/s/AKfycbxMsw8uypjUeuBV8-75YiMlonNJIZQl-tkPe0BT6uIUIMhm3tCV/exec'
+    requests.get(url, params=payload)
+    return
+# [END drop_payload]
+
+
 # [START main]
 def run(gcs_uri):
     if gcs_uri[:5] != 'gs://':
         raise Exception('Image uri must be of the form gs://bucket/object')
-    annotations = identify_image(gcs_uri)
-    if not annotations:
-        print(annotations)
+    identity_objects = identify_image(gcs_uri)
+    colors = identity_objects['colors']
+    meta = identity_objects['meta']
+    if not colors:
+        print(colors)
     else:
-        for annotation in annotations:
-            color = annotation.get('color')
-            pixel_fraction = annotation.get('pixelFraction')
+        for color_obj in colors:
+            color = color_obj.get('color')
+            pixel_fraction = color_obj.get('pixelFraction')
             red = color.get('red')
             green = color.get('green')
             blue = color.get('blue')
@@ -107,16 +122,29 @@ def run(gcs_uri):
             actual_name, closest_name = get_color_name(required_colors)
             if 'yellow' in closest_name or 'gold' in closest_name:
                 message = gcs_uri + ' is DED'
+                status = 'mildew infection'
+                treatment = 'fumigate'
+                result = 'pending'
                 break
             elif 'green' in closest_name:
                 message = gcs_uri + ' looks healthy to me ¯\_(ツ)_/¯'
-#        print(message)
+                status = 'healthy'
+                treatment = 'n/a'
+                result = 'n/a'
+
         return_obj = {
                 'url': gcs_uri,
+                'status': status,
+                'treatment': treatment,
+                'result': result,
+                'coordinates': '40.7053° N, 74.0140° W',
+                'meta': meta,
                 'message': message,
-                'meta': annotations,
                 }
-        return return_obj
+
+        drop_payload(return_obj)
+
+        return
 
 # [END main]
 
