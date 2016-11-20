@@ -14,8 +14,8 @@
 
 from planthealth import get_model, storage
 from flask import Blueprint, current_app, redirect, render_template, request, \
-    url_for
-
+    url_for 
+import machine_learning.identify_color as identify
 
 crud = Blueprint('crud', __name__)
 
@@ -34,6 +34,12 @@ def upload_image_file(file):
         file.filename,
         file.content_type
     )
+
+    bucket = current_app.config['CLOUD_STORAGE_BUCKET']
+
+    urlstring = "gs://"+bucket+"/"+file.filename
+
+    print(identify.run(urlstring))
 
     current_app.logger.info(
         "Uploaded file %s as %s.", file.filename, public_url)
